@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from service.auth_service import login, AuthError, register
+from validator.auth_validator import check_credentials, check_register_crendentials
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -10,8 +11,7 @@ def login_route():
         username_or_email = data.get('username')
         password = data.get('password')
 
-        if not username_or_email or not password:
-            return jsonify({"error": "Champs manquants"}), 400
+        check_credentials(username_or_email, password)
 
         result = login(username_or_email, password)
         return jsonify(result), 200
@@ -31,8 +31,7 @@ def register_route():
         email = data.get('email')
         password = data.get('password')
 
-        if not username or not email or not password:
-            return jsonify({"error": "Champs manquants"}), 400
+        check_register_crendentials(email, username, password)
 
         result = register(username, email,password)
         return jsonify(result), 200
